@@ -1,15 +1,8 @@
-FROM node:lts-alpine as builder
+FROM nginx:stable-alpine
 
-ENV NPM_CONFIG_LOGLEVEL=warn
-ENV NPM_CONFIG_COLOR=false
+# Adjust nginx config to make it stay in foreground
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
-WORKDIR /app
-COPY . /app
+EXPOSE 80
 
-RUN npm install
-
-RUN npm run build
-
-## production environment
-FROM nginx:stable-alpine as deploy
-COPY --from=builder /app/build /usr/share/nginx/html
+CMD ["/usr/sbin/nginx"]
